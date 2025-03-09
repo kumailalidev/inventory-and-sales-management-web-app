@@ -1,0 +1,61 @@
+@* Razor view *@
+
+<!doctype html>
+<html lang='en'>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Inventory and Sales</title>
+    <link href='/lib/bootstrap/css/bootstrap.min.css' rel='stylesheet'>
+    <link href='/css/site.css' rel="stylesheet" asp-append-version="true">
+</head>
+
+<body>
+    <header>
+        <div class="d-flex p-2 justify-content-center bg-black text-light">
+            Developed by&nbsp;<a class="link-light" href="https://www.github.com/kumailalidev" target="_blank">Kumail
+                Ali
+                Shaikh</a>
+        </div>
+        @* Navigation Menu *@
+        <nav class="navbar navbar-expand-lg bg-body-tertiary mb-2">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Inventory and Sales App</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <partial name="_NavBar" />
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    @* Main content *@
+    <div class="container">
+        <div>
+            @* 'title' section. It is optional section, has to be used by every razor view. *@
+            @RenderSection(name: "title", required: false)
+            <hr>
+        </div>
+        <div>
+            @* Placeholder for each individual view (razor view) *@
+            @RenderBody()
+        </div>
+    </div>
+
+    @* JavaScript *@
+    @* Bootstrap *@
+    <script src='/lib/bootstrap/js/bootstrap.bundle.min.js'></script>
+    @* JQuery *@
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    @await RenderSectionAsync(name: "Scripts", required: false)
+
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+@* Razor View *@
+
+@model CoreBusiness.Category
+@section title {
+    <h1>Categories</h1>
+}
+
+<h2 class="pb-3">Add Category</h2>
+
+@* Render _Category partial *@
+<partial name="_Category" model="@Model" />

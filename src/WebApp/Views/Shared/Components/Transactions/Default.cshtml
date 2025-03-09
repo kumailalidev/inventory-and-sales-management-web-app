@@ -1,0 +1,41 @@
+@model IEnumerable<CoreBusiness.Transaction>
+
+@* Transaction list can be empty (Empty list is different than null) *@
+@if (!Model.Any())
+{
+    <div class="d-flex justify-content-center">
+        <p>Your transactions will appear here....</p>
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Seller Name</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Date Time</th>
+                <th scope="col">Qty Before</th>
+                <th scope="col">Qty Sold</th>
+                <th scope="col">Qty After</th>
+                <th scope="col">Sold Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transaction in Model)
+            {
+                <tr>
+                    <th scope="row">@transaction.Id</th>
+                    <td>@transaction.CashierName</td>
+                    <td>@transaction.ProductName</td>
+                    <td>@transaction.TimeStamp.ToString("MM/dd hh:mm")</td>
+                    <td>@transaction.BeforeQty</td>
+                    <td>@transaction.SoldQty</td>
+                    <td>@(transaction.BeforeQty - transaction.SoldQty)</td>
+                    <td>@(string.Format("{0:c}", transaction.SoldQty * transaction.Price))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

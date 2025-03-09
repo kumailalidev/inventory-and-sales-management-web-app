@@ -1,0 +1,94 @@
+@model TransactionsViewModel
+
+@section title {
+    <h1>Transactions</h1>
+}
+
+<div id="print-area">
+    <form method="post" asp-controller="Transactions" asp-action="Search" id="transactions">
+        <div class="row">
+            <div class="col-2 form-group">
+                <label asp-for="CashierName" class="col-form-label"></label>
+                <input type="text" asp-for="CashierName" class="form-control" />
+            </div>
+            <div class="col-3 form-group">
+                <label asp-for="StartDate" class="col-form-label"></label>
+                <input type="date" asp-for="StartDate" class="form-control" />
+            </div>
+            <div class="col-3 form-group">
+                <label asp-for="EndDate" class="col-form-label"></label>
+                <input type="date" asp-for="EndDate" class="form-control" />
+            </div>
+            <div class="col-2 form-group">
+                <label class="col-form-label">&NonBreakingSpace;</label>
+                <button class="btn btn-primary form-control" type="submit">Search</button>
+            </div>
+            <div class="col-2 form-group">
+                <label class="col-form-label">&NonBreakingSpace;</label>
+                <button type="button" class="btn btn-primary form-control" id="print">Print</button>
+            </div>
+        </div>
+    </form>
+
+    <hr>
+    @if (!Model.Transactions.Any())
+    {
+        <div class="d-flex justify-content-center">
+            <p>Filtered transactions will appear here....</p>
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Date Time</th>
+                    <th scope="col">Seller Name</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Qty Before</th>
+                    <th scope="col">Qty Sold</th>
+                    <th scope="col">Qty After</th>
+                    <th scope="col">Sold Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var transaction in Model.Transactions)
+                {
+                    <tr>
+                        <th scope="row">@transaction.Id</th>
+                        <td>@transaction.TimeStamp.ToString("yyyy-MM-dd hh:mm")</td>
+                        <td>@transaction.CashierName</td>
+                        <td>@transaction.ProductName</td>
+                        <td>@transaction.BeforeQty</td>
+                        <td>@transaction.SoldQty</td>
+                        <td>@(transaction.BeforeQty - transaction.SoldQty)</td>
+                        <td>@(string.Format("{0:c}", transaction.SoldQty * transaction.Price))</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6">&NonBreakingSpace;</td>
+                    <td style="text-align: right;">
+                        <b>Grand Total:</b>
+                    </td>
+                    <td style="text-align: right;">
+                        @* Calculate total amount of sales *@
+                        <b>@(string.Format("{0:c}", Model.Transactions.Sum(t => t.Price * t.SoldQty)))</b>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    }
+</div>
+@section Scripts {
+    <script>
+        // Handle printing
+        $(function () {
+            $("#print").on("click", function () {
+                window.print()
+            })
+        })
+    </script>
+}

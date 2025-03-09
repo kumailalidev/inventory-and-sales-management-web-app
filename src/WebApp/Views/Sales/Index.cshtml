@@ -1,0 +1,115 @@
+@model SalesViewModel
+
+@section title {
+    <div class="row mb-3">
+        <div class="col-6">
+            <h2>Sales</h2>
+        </div>
+        <div class="col-6 d-flex justify-content-end">
+            <p>Seller: <span
+                    class="badge bg-dark-subtle border border-dark-subtle text-dark-emphasis rounded-pill">@User?.Identity?.Name</span>
+            </p>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-4">
+        @* Validation errors *@
+        <div class="text-danger" asp-validation-summary="All"></div>
+        <label class="col-form-label mb-2"><strong>Product Category</strong></label>
+        @* Category selection *@
+        <select asp-for="SelectedCategoryId" class="form-control">
+            <option value="">Please Select</option>
+            @if (Model.Categories != null && Model.Categories.Count() > 0)
+            {
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            }
+        </select>
+        <br>
+        <div class="" id="productsPartial">
+            @* ... Product list will be displayed after category selection *@
+            @* ... *@
+        </div>
+        <div id="productDetailsPartial">
+            @* ... Product details will be displayed after selecting a product *@
+            @* ... *@
+        </div>
+        @* Sales form *@
+        <form method="post" id="formSale" asp-controller="Sales" asp-action="Sell">
+            <input type="hidden" asp-for="SelectedProductId" />
+            <div class="form-group">
+                <label asp-for="QuantityToSell"></label>
+                <input class="form-control" type="number" min="1" asp-for="QuantityToSell">
+            </div>
+            <br>
+            <div class="form-group">
+                <input class="btn btn-primary" type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+    <div class="col-8">
+        @* List of transactions *@
+        @* Rendering a view component*@
+
+        @await Component.InvokeAsync("Transactions", new { userName = User?.Identity?.Name })
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            // Initialize the sale form
+            $("#formSale").hide()
+            $("#QuantityToSell").val("")
+
+            // Load the products if the category already selected
+            var selectedCategoryId = $("#SelectedCategoryId").val()
+            if (selectedCategoryId > 0) {
+                // load the products
+                loadProducts(selectedCategoryId)
+            }
+
+            // Handle category selection
+            $("#SelectedCategoryId").on("change", function () {
+                loadProducts($(this).val())
+            })
+        })
+
+        // Handle product selection
+        $("#productsPartial").on("click", ".product-row", function () {
+            // Highlight the selected row
+            $(".product-row").removeClass("highlight")
+            $(this).addClass("highlight")
+
+            // Get the product ID from the 'product-id' attribute of the clicked row
+            var productId = $(this).attr("product-id")
+
+            // Display the details of the product
+            $("#productDetailsPartial").load("/Sales/SellProductPartial", { id: parseInt(productId) })
+
+            // Show and hide form
+            if (productId > 0) {
+                $("#SelectedProductId").val(productId)
+                $("#formSale").show();
+            }
+            else {
+                $("#SelectedProductId").val(productId);
+                $("#formSale").hide()
+            }
+        })
+
+        function loadProducts(categoryId) {
+            // Fetch the products based on selected category
+            // Partial view content will be rendered inside element with id 'productsPartial'
+            $("#productsPartial").load("/Sales/ProductsByCategoryPartial", { categoryId: categoryId });
+
+            // Clear the content of product details and sale form
+            $("#productDetailsPartial").html("");
+            $("#formSale").hide();
+        }
+    </script>
+}

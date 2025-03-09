@@ -1,0 +1,80 @@
+@* Razor partial view *@
+
+@model ProductViewModel
+@{
+    string action = ViewBag.Action ?? string.Empty;
+}
+
+<form method="post" asp-controller="Products" asp-action="@action">
+    @if (action?.ToLower() == "edit")
+    {
+        <input type="hidden" asp-for="Product.Id">
+    }
+
+    <div class="text-danger" asp-validation-summary="All"></div>
+
+    <div class="mb-3 row">
+        <div class="col-2">
+            @* asp-for creates a label called 'Category' *@
+            <label asp-for="Product.CategoryId" class="col-form-label"></label>
+        </div>
+        <div class="col-6">
+            @* NOTE: CategoryId is POSTED Back not the Category obj *@
+            <select asp-for="Product.CategoryId" class="form-control">
+                <option value="">Please Select</option>
+                @if (Model.Categories != null && Model.Categories.Count() > 0)
+                {
+                    @foreach (var category in Model.Categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        @* Validation error message *@
+        <div class="col">
+            <span class="text-danger" asp-validation-for="Product.CategoryId"></span>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <div class="col-2">
+            <label asp-for="Product.Name" class="col-form-label"></label>
+        </div>
+        <div class="col-6">
+            <input type="text" asp-for="Product.Name" class="form-control" />
+        </div>
+        @* Validation error message *@
+        <div class="col">
+            <span class="text-danger" asp-validation-for="Product.Name"></span>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <div class="col-2">
+            <label asp-for="Product.Price" class="col-form-label"></label>
+        </div>
+        <div class="col-6">
+            <input type="number" min="0" step="any" asp-for="Product.Price" class="form-control" />
+        </div>
+        @* Validation error message *@
+        <div class="col">
+            <span class="text-danger" asp-validation-for="Product.Price"></span>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <div class="col-2">
+            <label asp-for="Product.Quantity" class="col-form-label"></label>
+        </div>
+        <div class="col-6">
+            <input type="number" min="0" step="1" asp-for="Product.Quantity" class="form-control" />
+        </div>
+        @* Validation error message *@
+        <div class="col">
+            <span class="text-danger" asp-validation-for="Product.Quantity"></span>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <div class="col-2">
+            <input type="submit" class="btn btn-primary" value="Save">
+        </div>
+    </div>
+</form>

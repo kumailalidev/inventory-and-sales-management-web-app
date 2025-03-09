@@ -1,0 +1,42 @@
+@inject SignInManager<IdentityUser> SignInManager
+
+<ul class="navbar-nav flex-grow-1">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" asp-controller="Home" asp-action="Index">Home</a>
+    </li>
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+        // Check claim types for specific roles
+        var isAdmin = User.HasClaim(c => c.Type == "Position" && c.Value == "Admin");
+        var isSeller = User.HasClaim(c => c.Type == "Position" && c.Value == "Seller");
+        var isManager = User.HasClaim(c => c.Type == "Position" && c.Value == "Manager");
+
+        @* Admin Only *@
+        @if (isAdmin)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Categories" asp-action="Index">Categories</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Products" asp-action="Index">Products</a>
+            </li>
+        }
+
+        @* Admin and Sales *@
+        @if (isAdmin || isSeller)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Sales" asp-action="Index">Sales</a>
+            </li>
+        }
+
+        @* Admin and Manager *@
+        @if (isAdmin || isManager)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Transactions" asp-action="Index">Transactions</a>
+            </li>
+        }
+    }
+</ul>
